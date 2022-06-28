@@ -15,10 +15,6 @@ const projectSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  clientInformation: {
-    type: Array,
-    required: true,
-  },
   hostingProvider: {
     type: String,
     required: true,
@@ -36,6 +32,14 @@ const projectSchema = new mongoose.Schema({
     required: true,
     get: value => value + '%'
   },
+  wpUser: {
+    type: String,
+    required: true,
+  },
+  wpPassword: {
+    type: String,
+    required: true,
+  },
   startDate: {
     type: Date,
     required: true,
@@ -48,19 +52,25 @@ const projectSchema = new mongoose.Schema({
     type: Date,
     required: true,
   },
+  clientInformation: {
+    clientName:  {
+      type: String,
+      required: true
+    },
+    clientPhone:  {
+      type: String,
+      required: true
+    },
+    clientEmail:  {
+      type: String,
+      required: true
+    },
+  },
   observation: {
     type: String,
     required: false,
     minlength: 5
   },
-  wpUser: {
-    type: String,
-    required: true,
-  },
-  wpPassword: {
-    type: String,
-    required: true,
-  }
 });
 
 module.exports = mongoose.model('Project', projectSchema);
