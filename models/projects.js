@@ -48,7 +48,7 @@ const projectSchema = new mongoose.Schema({
     type: Date,
     required: false,
   },
-  lastBackup: {
+  lastBackupDate: {
     type: Date,
     required: true,
   },
