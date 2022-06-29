@@ -1,6 +1,5 @@
 const mongoose = require('mongoose');
 
-
 const projectSchema = new mongoose.Schema({
   domain: {
     type: String,
@@ -73,21 +72,5 @@ const projectSchema = new mongoose.Schema({
     minlength: 5
   },
 });
-
-/*  clientInformation: {
-    clientName:  {
-      type: String,
-      required: true
-    },
-    clientPhone:  {
-      type: String,
-      required: true
-    },
-    clientEmail:  {
-      type: String,
-      required: true
-    },
-  },
-*/
 
 module.exports = mongoose.model('Project', projectSchema);

@@ -98,35 +98,4 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-/*
-async function addProject() {
-  let newProject = new ProjectModel({
-    domain: 'devsoft.co.ao',
-    status: 'Pendent',
-    category: 'Website',
-    hostingProvider: 'Godaddy',
-    domainProvider: 'SEPE',
-    domainExpirationDate: '2018-01-24T21:42:47.912Z',
-    percentageConclusion: 50,
-    wpUser: 'admin',
-    wpPassword: 'admin123',
-    startDate: '2015-02-30T21:42:47.912Z',
-    conlusionDate: '2016-02-24T21:42:47.912Z',
-    lastBackupDate: '2020-11-24T21:42:47.912Z',
-    "clientInformation": {
-      "clientName": "Devsoft",
-      "clientPhone": "934546534",
-      "clientEmail": "geral@devsoft.co.ao",
-    },
-    observation: 'Alguma observação para este projecto.',
-  });
-
-  newProject = await newProject.save();
-  console.log(newProject);
-}
-
-addProject();
-
-*/
-
 module.exports = router;
