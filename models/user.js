@@ -1,6 +1,30 @@
 const mongoose = require('mongoose');
 const Joi = require('joi');
 
+const projectSchema = new mongoose.Schema({
+  domain: {
+    type: String,
+  },
+  status: {
+    type: String,
+    default: 'Pendente',
+    required: true
+  },
+  percentageConclusion: {
+    type: Number,
+    default: 0,
+    min: 0,
+    max: 100,
+    requred: true
+  },
+  startDate: {
+    type: Date
+  },
+  conlusionDate: {
+    type: Date
+  }
+});
+
 const userSchema = new mongoose.Schema({
   name: {
     type: String,
@@ -25,11 +49,12 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  typeUser: {
+  userType: {
     type: String,
     required: true,
     default: "User"
-  }
+  },
+  projects: [projectSchema]
 });
 
 function validateUser(user) {
@@ -39,6 +64,7 @@ function validateUser(user) {
     telephone: Joi.string().required(),
     password: Joi.string().min(6).required(),
     role: Joi.string().required(),
+    projectId: Joi.string(),
   });
   return schema.validate(user);
 }

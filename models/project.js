@@ -32,7 +32,6 @@ const projectSchema = new mongoose.Schema({
     required: true,
     min: 0,
     max: 100,
-    get: value => value + '%'
   },
   wpUser: {
     type: String,
