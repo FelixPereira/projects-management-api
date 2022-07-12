@@ -1,6 +1,38 @@
 const mongoose = require('mongoose');
 const Joi = require('joi');
 
+const clientSchema = new mongoose.Schema({
+  clientName:  {
+    type: String,
+    required: true
+  },
+  clientPhone:  {
+    type: String,
+    required: true
+  },
+  clientEmail:  {
+    type: String,
+    required: true
+  }
+});
+
+const responsibleSchema = new mongoose.Schema({
+  name: {
+    type: String,
+    required: true,
+    minlength: 3
+  },
+  email: {
+    type: String,
+    required: true,
+    unique: true,
+  },
+  telephone: {
+    type: String,
+    required: true,
+  }
+});
+
 const projectSchema = new mongoose.Schema({
   domain: {
     type: String,
@@ -54,20 +86,7 @@ const projectSchema = new mongoose.Schema({
     required: true,
   },
   clientInformation: {
-    type: new mongoose.Schema({
-      clientName:  {
-        type: String,
-        required: true
-      },
-      clientPhone:  {
-        type: String,
-        required: true
-      },
-      clientEmail:  {
-        type: String,
-        required: true
-      }
-    }),
+    type: clientSchema,
     required: true
   },
   observation: {
@@ -76,22 +95,7 @@ const projectSchema = new mongoose.Schema({
     minlength: 5
   },
   responsible: {
-    type: new mongoose.Schema({
-      name: {
-        type: String,
-        required: true,
-        minlength: 3
-      },
-      email: {
-        type: String,
-        required: true,
-        unique: true,
-      },
-      telephone: {
-        type: String,
-        required: true,
-      },
-    })
+    type: responsibleSchema,
   }
 });
 
@@ -111,11 +115,11 @@ function validateProject(project) {
     lastBackupDate: Joi.date().required(),
     clientInformation: Joi.required(),
     observation: Joi.string().required(),
-    responsibleId: Joi.string().required(),
+    responsibleId: Joi.string()
   });
 
   return schema.validate(project);
-}
+};
 
 module.exports.Project = mongoose.model('Project', projectSchema);
 module.exports.validate = validateProject;

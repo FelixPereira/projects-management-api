@@ -4,6 +4,7 @@ const Joi = require('joi');
 const projectSchema = new mongoose.Schema({
   domain: {
     type: String,
+    required: true
   },
   status: {
     type: String,
@@ -49,10 +50,9 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  userType: {
-    type: String,
-    required: true,
-    default: "User"
+  isAdmin: {
+    type: Boolean,
+    default: false
   },
   projects: [projectSchema]
 });
@@ -64,7 +64,6 @@ function validateUser(user) {
     telephone: Joi.string().required(),
     password: Joi.string().min(6).required(),
     role: Joi.string().required(),
-    projectId: Joi.string(),
   });
   return schema.validate(user);
 }
