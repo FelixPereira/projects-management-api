@@ -1,9 +1,12 @@
 const {User, validate} = require('../models/user'); 
 const express = require('express');
 const router = express.Router();
-const {Project} = require('../models/project');
+const bcrypt = require('bcrypt');
 
-router.get('/', async (req, res) => {
+const {Project} = require('../models/project');
+const {verifyAuthAndAdmin} = require('../middleware/verifyAuth');
+
+router.get('/', verifyAuthAndAdmin, async (req, res) => {
   try {
     const users = await User.find().sort('name');
     if(!users || users.length === 0) return res.status(400).send('Nenhum usuário encontrado.');
@@ -23,9 +26,11 @@ router.post('/adicionar-usuario', async (req, res) => {
   if(user) return res.status(400).send('Este email já está em uso.');
 
   let newUser = new User(req.body);
+  const salt = await bcrypt.genSalt(10);
+  newUser.password = await bcrypt.hash(req.body.password, salt);
 
   try {
-    newUser = await newUser.save();
+    await newUser.save();
     res.send(newUser);
   } 
   catch(error) {
