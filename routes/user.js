@@ -4,7 +4,7 @@ const router = express.Router();
 const bcrypt = require('bcrypt');
 
 const {Project} = require('../models/project');
-const {verifyAuthAndAdmin} = require('../middleware/verifyAuth');
+const {verifyAuthAndAdmin, verifyAuthAndAuthorization} = require('../middleware/verifyAuth');
 
 router.get('/', verifyAuthAndAdmin, async (req, res) => {
   try {
@@ -18,7 +18,7 @@ router.get('/', verifyAuthAndAdmin, async (req, res) => {
   }
 });
 
-router.post('/adicionar-usuario', async (req, res) => {
+router.post('/adicionar-usuario', verifyAuthAndAdmin, async (req, res) => {
   const {error} = validate(req.body);
   if(error) return res.status(400).send(error.details[0].message);
 
@@ -38,7 +38,7 @@ router.post('/adicionar-usuario', async (req, res) => {
   }
 });
 
-router.put('/:id', async (req, res) => {
+router.put('/:id', verifyAuthAndAuthorization, async (req, res) => {
   const {error} = validate(req.body);
   if(error) return res.status(400).send(error.details[0].message);
 
@@ -49,9 +49,12 @@ router.put('/:id', async (req, res) => {
 
   if(existingUser && req.body.email !== userToUpdate.email) return res.send('Este email já está em uso');
 
+  const salt = await bcrypt.genSalt(10);
+  const hashedPassword = await bcrypt.hash(req.body.password, salt);
+
   try {
     userToUpdate = await User.findByIdAndUpdate(id, {
-      $set: req.body
+      $set: {...req.body, password: hashedPassword}
     }, {new: true});
 
     res.send(userToUpdate);
@@ -61,7 +64,7 @@ router.put('/:id', async (req, res) => {
   } 
 });
 
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', verifyAuthAndAuthorization, async (req, res) => {
   const id = req.params.id;
 
   try {
@@ -73,7 +76,7 @@ router.delete('/:id', async (req, res) => {
   }
 });
 
-router.get('/:id', async (req, res) => {
+router.get('/:id', verifyAuthAndAuthorization, async (req, res) => {
   const id = req.params.id;
   
   try {
@@ -85,7 +88,7 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-router.post('/adicionar-project-user', async (req, res) => {
+router.post('/adicionar-project-user', verifyAuthAndAdmin, async (req, res) => {
   const user = await User.findById(req.body.userId);
   const project = await Project.findById(req.body.projectId);
 

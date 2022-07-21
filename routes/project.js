@@ -1,16 +1,21 @@
-const {Project, validate} = require('../models/project');
-const {User} = require('../models/user');
 const express = require('express');
 const router = express.Router();
+const {Project, validate} = require('../models/project');
+const {User} = require('../models/user');
+const {verifyAuthAndAdmin, verifyAuth} = require('../middleware/verifyAuth');
 
-router.get('/', async (req, res) => {
-  const projects = await Project.find().sort('startDate');
-  if(!projects) return res.status(400).send('Nenhum projecto encontrado.');
-
-  res.send(projects);
+router.get('/', verifyAuthAndAdmin, async (req, res) => {
+  try {
+    const projects = await Project.find().sort('startDate');
+    if(!projects) return res.status(400).send('Nenhum projecto encontrado.');
+  
+    res.send(projects);
+  } catch(err) {
+    res.status(500).send(err);
+  }
 });
 
-router.post('/adicionar-projecto', async (req, res) => {
+router.post('/adicionar-projecto', verifyAuthAndAdmin, async (req, res) => {
   const {error} = validate(req.body);
   if(error) return res.status(400).send(error.details[0].message);
 
@@ -36,53 +41,36 @@ router.post('/adicionar-projecto', async (req, res) => {
   }
 });
 
-router.put('/:id', async (req, res) => {
+router.put('/:id', verifyAuth, async (req, res) => {
   const {error} = validate(req.body);
   if(error) return res.status(400).send(error.details[0].message);
 
-  const id = req.params.id;
+  const responsible = await User.findById(req.body.responsibleId);
+  console.log(responsible._id)
+  console.log(req.user);
 
-  let project = await Project.findById(id);
-  if(!project) {
-    res.status(404).send('Este projecto não existe');
-  } else {
-      try {
-        project = {
-          domain: req.body.domain,
-          status: req.body.status,
-          category: req.body.category,
-          hostingProvider: req.body.hostingProvider,
-          domainProvider: req.body.domainProvider,
-          domainExpirationDate: req.body.domainExpirationDate,
-          percentageConclusion: req.body.percentageConclusion,
-          wpUser: req.body.wpUser,
-          wpPassword: req.body.wpPassword,
-          startDate: req.body.startDate,
-          conlusionDate: req.body.conlusionDate,
-          lastBackupDate: req.body.lastBackupDate,
-          clientInformation: {
-            clientName: req.body.clientInformation.clientName,
-            clientPhone: req.body.clientInformation.clientPhone,
-            clientEmail: req.body.clientInformation.clientEmail,
-          },
-          observation: req.body.observation,
-          responsible: {
-            name: responsible.name,
-            email: responsible.email,
-            telephone: responsible.telephone
-          }
-        };
-    
-        await project.save();
-        res.send(project);
-    
-      } catch(error) {
-        console.log(error.message);
+  if(responsible._id !== req.user.id && req.user.isAdmin === false) return res.status(403).send('Você não tem permissão para fazer esta alteração.'); 
+  
+  try {
+    const project = await Project.findByIdAndUpdate(req.params.id, {
+      $set: {
+        ...req.body,
+        responsible: {
+          name: responsible.name,
+          email: responsible.email,
+          telephone: responsible.telephone
+        }
       }
-    }
+    }, {new: true});
+    res.send(project);
+  } catch(err) {
+    res.status(500).send('err:', err.message);
+  }
+
+  
 });
 
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', verifyAuthAndAdmin, async (req, res) => {
   const id = req.params.id;
 
   const project = await Project.findById(id);
