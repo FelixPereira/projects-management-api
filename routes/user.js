@@ -94,7 +94,7 @@ router.post('/adicionar-project-user', verifyAuthAndAdmin, async (req, res) => {
 
   user.projects.push(project);
 
-  try{j
+  try{
     await user.save();
     res.send(user);
   }
