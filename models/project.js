@@ -2,15 +2,15 @@ const mongoose = require('mongoose');
 const Joi = require('joi');
 
 const clientSchema = new mongoose.Schema({
-  clientName:  {
+  clientName: {
     type: String,
     required: true
   },
-  clientPhone:  {
+  clientPhone: {
     type: String,
     required: true
   },
-  clientEmail:  {
+  clientEmail: {
     type: String,
     required: true
   }

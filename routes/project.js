@@ -4,7 +4,7 @@ const {Project, validate} = require('../models/project');
 const {User} = require('../models/user');
 const {verifyAuthAndAdmin, verifyAuth} = require('../middleware/verifyAuth');
 
-router.get('/', verifyAuth, async (req, res) => {
+router.get('/', async (req, res) => {
   try {
     const projects = await Project.find().sort('startDate');
     if(!projects) return res.status(400).send('Nenhum projecto encontrado.');
@@ -91,7 +91,7 @@ router.delete('/:id', verifyAuth, async (req, res) => {
   }
 });
 
-router.get('/:id', verifyAuth, async (req, res) => {
+router.get('/:id', async (req, res) => {
   try {
     const project = await Project.findById(req.params.id);
     res.send(project);

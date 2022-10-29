@@ -15,8 +15,10 @@ router.post('/login', async (req, res) => {
   if(!passwordIsEqual) return res.status(400).send('Email ou passord inválido.');
 
   const token = jwt.sign({id: user._id, isAdmin: user.isAdmin}, process.env.JWT_SECRET);
-
-  res.header('x-token', token).send(token);
+  res.status(200).send({
+    ...user,
+    token
+  });
 });
 
 module.exports = router;

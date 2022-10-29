@@ -11,12 +11,12 @@ const projectSchema = new mongoose.Schema({
     default: 'Pendente',
     required: true
   },
-  percentageConclusion: {
+  progress: {
     type: Number,
     default: 0,
     min: 0,
     max: 100,
-    requred: true
+    required: true
   },
   startDate: {
     type: Date
@@ -35,7 +35,8 @@ const userSchema = new mongoose.Schema({
   email: {
     type: String,
     required: true,
-    unique: true
+    unique: true,
+    trim: true
   },
   telephone: {
     type: String,
@@ -45,6 +46,11 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
     minlength: 6
+  },
+  avatar: {
+    type: String,
+    required: false,
+    default: "https://i.ibb.co/4pDNDk1/avatar.png"
   },
   role: {
     type: String,
@@ -63,7 +69,9 @@ function validateUser(user) {
     email: Joi.string().required(),
     telephone: Joi.string().required(),
     password: Joi.string().min(6).required(),
+    avatar: Joi.string(),
     role: Joi.string().required(),
+    isAdmin: Joi.boolean().required(),
   });
   return schema.validate(user);
 }
