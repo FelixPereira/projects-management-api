@@ -7,7 +7,7 @@ const app = express();
 
 
 mongoose
-  .connect('mongodb://localhost:27017/projectsmanagement')
+  .connect('mongodb://0.0.0.0:27017/projectsmanagement')
   .then((res) => console.log('Connected to mongoDB...'))
   .catch(error => console.log(error.message));
 
