@@ -8,7 +8,8 @@ const {
   deleteUser,
   getUser,
   assignProject,
-  userLogin
+  userLogin,
+  validateToken
 } = require('../controllers/user');
 
 router.get('/', getUsers);
@@ -18,5 +19,6 @@ router.delete('/:id', verifyAuthAndAuthorization, deleteUser);
 router.get('/:id', getUser);
 router.post('/adicionar-project-user', verifyAuthAndAdmin, assignProject);
 router.post('/login', userLogin);
+router.post('/validar-token', validateToken);
 
 module.exports = router;
