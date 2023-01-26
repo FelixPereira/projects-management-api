@@ -6,7 +6,8 @@ const _ = require('lodash');
 const getProjects = async (req, res) => {
   try {
     const projects = await Project.find();
-    if(!projects || (Array.isArray(projects).length === 0)) return res.status(400).send('Nenhum projecto encontrado.');
+    if(!projects || (Array.isArray(projects).length === 0)) 
+      return res.status(500).send('Nenhum projecto encontrado.');
   
     res.status(200).send(projects);
   } catch(err) {
@@ -23,8 +24,9 @@ const addProject = async (req, res) => {
 
   try {
     const responsible = await User.findById(req.body.responsibleId);
-    if(!responsible) return res.status(404).send('Usuário não foi encontrado.');
+    if(!responsible) return res.status(404).send('O usuário não foi encontrado.');
 
+    console.log(responsible);
     const project = _.omit(
       req.body, [
       'clientName', 
@@ -51,7 +53,7 @@ const addProject = async (req, res) => {
     await newProject.save();
     responsible.projects.push(newProject);
     await responsible.save();
-    res.status(200).send(newProject);
+    res.status(200).send('Project adicionado com sucesso.');
   } catch(err) {
     res.status(500).send(err.message);
   }
@@ -113,7 +115,6 @@ const deleteProject = async (req, res) => {
   // const currentUser = await User.findById(req.user.id);
 
   if(!project) return res.status(404).send('Projecto não encontrado.');
-  console.log(project);
 
   // if(
   //   currentUser.email !== project.responsible.email
