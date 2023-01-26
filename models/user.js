@@ -21,7 +21,7 @@ const projectSchema = new mongoose.Schema({
   startDate: {
     type: Date
   },
-  conlusionDate: {
+  endDate: {
     type: Date
   }
 });
