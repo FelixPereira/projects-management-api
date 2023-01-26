@@ -6,7 +6,7 @@ const clientSchema = new mongoose.Schema({
     type: String,
     required: true
   },
-  clientPhone: {
+  clientTelephone: {
     type: String,
     required: true
   },
@@ -25,7 +25,6 @@ const responsibleSchema = new mongoose.Schema({
   email: {
     type: String,
     required: true,
-    unique: true,
   },
   telephone: {
     type: String,
@@ -59,7 +58,7 @@ const projectSchema = new mongoose.Schema({
     type: Date,
     required: false,
   },
-  percentageConclusion: {
+  progress: {
     type: Number,
     required: true,
     min: 0,
@@ -77,13 +76,9 @@ const projectSchema = new mongoose.Schema({
     type: Date,
     required: true,
   },
-  conlusionDate: {
+  endDate: {
     type: Date,
     required: false,
-  },
-  lastBackupDate: {
-    type: Date,
-    required: true,
   },
   clientInformation: {
     type: clientSchema,
@@ -99,27 +94,27 @@ const projectSchema = new mongoose.Schema({
   }
 });
 
-function validateProject(project) {
-  const schema = Joi.object({
-    domain: Joi.string().required(),
-    status: Joi.string().required(),
-    category: Joi.string().required(),
-    hostingProvider: Joi.string().required(),
-    domainProvider: Joi.string().required(),
-    domainExpirationDate: Joi.date().required(),
-    percentageConclusion: Joi.number().min(0).max(100).required(),
-    wpUser: Joi.string().required(),
-    wpPassword: Joi.string().required(),
-    startDate: Joi.date().required(),
-    conlusionDate: Joi.date().required(),
-    lastBackupDate: Joi.date().required(),
-    clientInformation: Joi.required(),
-    observation: Joi.string().required(),
-    responsibleId: Joi.string()
-  });
+// function validateProject(project) {
+//   const schema = Joi.object({
+//     domain: Joi.string().required(),
+//     status: Joi.string().required(),
+//     category: Joi.string().required(),
+//     hostingProvider: Joi.string().required(),
+//     domainProvider: Joi.string().required(),
+//     domainExpirationDate: Joi.date().required(),
+//     percentageConclusion: Joi.number().min(0).max(100).required(),
+//     wpUser: Joi.string().required(),
+//     wpPassword: Joi.string().required(),
+//     startDate: Joi.date().required(),
+//     conlusionDate: Joi.date().required(),
+//     lastBackupDate: Joi.date().required(),
+//     clientInformation: Joi.required(),
+//     observation: Joi.string().required(),
+//     responsibleId: Joi.string()
+//   });
 
-  return schema.validate(project);
-};
+//   return schema.validate(project);
+// };
 
 module.exports.Project = mongoose.model('Project', projectSchema);
-module.exports.validate = validateProject;
+// module.exports.validate = validateProject;
