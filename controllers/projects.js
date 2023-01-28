@@ -83,7 +83,7 @@ const updateProject = async (req, res) => {
       ]
     );
 
-    const proj = await Project.findByIdAndUpdate(req.params.id, {
+    await Project.findByIdAndUpdate(req.params.id, {
       $set: {
         ...project,
         clientInformation: {
@@ -100,12 +100,10 @@ const updateProject = async (req, res) => {
       }
     }, {new: true});
 
-    console.log(proj)
-
     res.status(200).send({message: 'Projecto actualizado com sucesso.'});
 
   } catch(err) {
-    res.status(500).send(err);
+    res.status(500).send(err.message);
   }
 };
 
