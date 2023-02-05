@@ -4,7 +4,7 @@ const {verifyAuthAndAdmin, verifyAuthAndAuthorization} = require('../middleware/
 const {
   getUsers,
   addNewUser,
-  uppdateUser,
+  updateUser,
   deleteUser,
   getUser,
   assignProject,
@@ -14,10 +14,10 @@ const {
 
 router.get('/', getUsers);
 router.post('/adicionar-usuario', addNewUser);
-router.put('/:id', verifyAuthAndAuthorization, uppdateUser);
-router.delete('/:id', verifyAuthAndAuthorization, deleteUser);
+router.put('/:id', updateUser);
+router.delete('/:id', deleteUser);
 router.get('/:id', getUser);
-router.post('/adicionar-project-user', verifyAuthAndAdmin, assignProject);
+router.post('/adicionar-project-user', assignProject);
 router.post('/login', userLogin);
 router.post('/validar-token', validateToken);
 

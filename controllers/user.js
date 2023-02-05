@@ -10,12 +10,13 @@ env.config();
 // ENCRYPT PASSWORD
 const encryptPassword = async (password) => {
   const salt = await bcrypt.genSalt(10);
-  return await bcrypt.hash(password, salt);
+  return bcrypt.hash(password, salt);
 }
 
 // USER LOGIN
 const userLogin = async (req, res) => {
-  if(!req.body.email || !req.body.password) return res.status(400).send('Email e password são obrigatórios');
+  if(!req.body.email || !req.body.password) 
+    return res.status(400).send('Email e password são obrigatórios');
   
   try {
     const user = await User.findOne({email: req.body.email});
@@ -49,7 +50,8 @@ const userLogin = async (req, res) => {
 const getUsers = async (req, res) => {
   try {
     const users = await User.find().sort('name');
-    if(!users || users.length === 0) return res.status(400).send('Nenhum usuário encontrado.');
+    if(!users || users.length === 0) 
+      return res.status(400).send('Nenhum usuário encontrado.');
 
     res.status(200).send(users);
   } catch(err) {
@@ -80,34 +82,29 @@ const addNewUser = async (req, res) => {
 };
 
 // UPDATE USER 
-const uppdateUser = async (req, res) => {
-  const {error} = validate(req.body);
-  if(error) {
-    res.status(400);
-    throw new Error(error.details[0].message);
-  }
-
-  const id = req.params.id;
-
-  const registeredUser = await User.findOne({email: req.body.email});
-  let userToUpdate = await User.findById(id);
-
-  if(registeredUser && req.body.email !== userToUpdate.email) {
-    res.status(400);
-    throw new Error('Este email já está em uso');
-  }
-
-  const hashedPassword = encryptPassword(req.body.password);
-
+const updateUser = async (req, res) => {
   try {
-    userToUpdate = await User.findByIdAndUpdate(id, {
-      $set: {...req.body, password: hashedPassword}
+    // const {error} = validate(req.body);
+    // if(error) {
+    //   res.status(400);
+    //   throw new Error(error.details[0].message);
+    // }
+
+    const id = req.params.id;
+
+    const registeredUser = await User.findOne({email: req.body.email});
+    let userToUpdate = await User.findById(id);
+
+    if(registeredUser && req.body.email !== userToUpdate.email)
+      return res.status(400).send('Este email já está em uso');
+
+    await User.findByIdAndUpdate(id, {
+      $set: { ...req.body }
     }, {new: true});
 
-    res.send(userToUpdate);
-  } 
-  catch(error) {
-    console.log(error.message);
+    res.status(200).send('Usuário actualizado com sucesso.');
+  } catch(error) {
+    res.status(500).send(error.message);
   } 
 };
 
@@ -117,10 +114,9 @@ const deleteUser = async (req, res) => {
 
   try {
     const userToDelete = await User.findByIdAndRemove(id);
-    res.send(userToDelete);
-  } 
-  catch(error) {
-    console.log(error.message);
+    res.status(200).send('Usuário removido com sucesso.');
+  } catch(err) {
+    res.status(500).send(err.message);
   }
 };
 
@@ -159,29 +155,29 @@ const getUser = async (req, res) => {
 
 // ASSIGN PROJECT TO USER
 const assignProject = async (req, res) => {
-  const user = await User.findById(req.body.userId);
-  const project = await Project.findById(req.body.projectId);
-
-  user.projects.push(project);
-
   try{
+    const user = await User.findById(req.body.responsibleId);
+    const project = await Project.findById(req.body.projectId);
+
+    const exist = user.projects.filter(project => project._id == req.body.projectId);
+    if(exist && exist.length > 0) return res.status(500).send('Este projecto já existe.');
+
+    user.projects.push(project);
+
     await user.save();
-    res.staus(400).send(user);
-  }
-  catch(error) {
-    console.log(error.message);
+    res.status(200).send('Projecto atribuído com sucesso.');
+  } catch(err) {
+    res.status(500).send(err.message);
   }
 };
 
 const validateToken = async (req, res) => {
   try {
     const token = req.body.token;
+    const decodedUser = jwt.verify(token, process.env.JWT_SECRET);
+    const user = await User.findById(decodedUser.id)
 
-    const user = jwt.verify(token, process.env.JWT_SECRET);
-
-    const user2 = await User.findById(user.id)
-
-    res.status(200).send(user2);
+    res.status(200).send(user);
   } catch(err) {
     res.status(500).send(err.message);
   }
@@ -190,7 +186,7 @@ const validateToken = async (req, res) => {
 module.exports = {
   getUsers,
   addNewUser,
-  uppdateUser,
+  updateUser,
   deleteUser,
   getUser,
   assignProject,
