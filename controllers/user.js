@@ -164,7 +164,15 @@ const assignProject = async (req, res) => {
 
     user.projects.push(project);
 
+    project.responsible = {
+      name: user.name,
+      email: user.email,
+      telephone: user.telephone,
+      _id: user._id
+    }
+
     await user.save();
+    await project.save();
     res.status(200).send('Projecto atribuído com sucesso.');
   } catch(err) {
     res.status(500).send(err.message);
