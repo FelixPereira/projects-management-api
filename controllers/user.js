@@ -22,8 +22,8 @@ const userLogin = async (req, res) => {
     const user = await User.findOne({email: req.body.email});
     if(!user) return res.status(400).send('Email ou password inválido.');
 
-    // const passwordIsEqual = await bcrypt.compare(req.body.password, user.password);
-    // if(!passwordIsEqual) return res.status(400).send('Email ou password inválido.');
+    const passwordIsEqual = await bcrypt.compare(req.body.password, user.password);
+    if(!passwordIsEqual) return res.status(400).send('Email ou password inválido.');
 
     const token = jwt.sign({id: user._id, isAdmin: user.isAdmin}, process.env.JWT_SECRET);
     const { _id, name, email, telephone, avatar, projects, role, isAdmin } = user;

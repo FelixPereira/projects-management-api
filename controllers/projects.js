@@ -5,8 +5,18 @@ const _ = require('lodash');
 // GET PROJECTS
 const getProjects = async (req, res) => {
   try {
-    const projects = await Project.find();
-    if(!projects || (Array.isArray(projects).length === 0)) 
+    const { searchTerm } = req.query;
+
+    let projects = await Project.find();
+
+    if(searchTerm) {
+      projects = projects.filter(project => {
+        return project.domain.includes(searchTerm) || 
+          project.clientInformation.clientName.includes(searchTerm);
+      });
+    }
+
+    if(!projects || projects.length === 0)
       return res.status(500).send('Nenhum projecto encontrado.');
   
     res.status(200).send(projects);
