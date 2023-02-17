@@ -5,11 +5,41 @@ const _ = require('lodash');
 // GET PROJECTS
 const getProjects = async (req, res) => {
   try {
-    const { searchTerm } = req.query;
+    const { 
+      searchTerm,
+      projectStatus,
+      domain,
+      hosting,
+      category
+    } = req.query;
 
     let projects = await Project.find();
 
     if(searchTerm) {
+      projects = projects.filter(project => {
+        return project.domain.includes(searchTerm) || 
+          project.clientInformation.clientName.includes(searchTerm);
+      });
+    }
+    if(projectStatus) {
+      projects = projects.filter(project => {
+        return project.domain.includes(searchTerm) || 
+          project.clientInformation.clientName.includes(searchTerm);
+      });
+    }
+    if(domain) {
+      projects = projects.filter(project => {
+        return project.domain.includes(searchTerm) || 
+          project.clientInformation.clientName.includes(searchTerm);
+      });
+    }
+    if(hosting) {
+      projects = projects.filter(project => {
+        return project.domain.includes(searchTerm) || 
+          project.clientInformation.clientName.includes(searchTerm);
+      });
+    }
+    if(category) {
       projects = projects.filter(project => {
         return project.domain.includes(searchTerm) || 
           project.clientInformation.clientName.includes(searchTerm);
