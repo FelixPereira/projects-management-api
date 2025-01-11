@@ -19,10 +19,8 @@ app.use(
   })
 )
 
-
 app.use('/api/projectos', projectRoutes);
 app.use('/api/usuarios', userRoutes);
-
 
 const PORT = process.env.PORT || 5001;
 

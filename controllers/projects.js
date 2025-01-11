@@ -5,53 +5,49 @@ const _ = require('lodash');
 // GET PROJECTS
 const getProjects = async (req, res) => {
   try {
-    const { 
+    const {
       searchTerm,
       projectStatus,
-      domain,
-      hosting,
+      domainProvider,
+      hostingProvider,
       category
-    } = req.query;
+     } = req.query;
 
     let projects = await Project.find();
 
     if(searchTerm) {
       projects = projects.filter(project => {
         return project.domain.includes(searchTerm) || 
-          project.clientInformation.clientName.includes(searchTerm);
-      });
-    }
-    if(projectStatus) {
-      projects = projects.filter(project => {
-        return project.domain.includes(searchTerm) || 
-          project.clientInformation.clientName.includes(searchTerm);
-      });
-    }
-    if(domain) {
-      projects = projects.filter(project => {
-        return project.domain.includes(searchTerm) || 
-          project.clientInformation.clientName.includes(searchTerm);
-      });
-    }
-    if(hosting) {
-      projects = projects.filter(project => {
-        return project.domain.includes(searchTerm) || 
-          project.clientInformation.clientName.includes(searchTerm);
-      });
-    }
-    if(category) {
-      projects = projects.filter(project => {
-        return project.domain.includes(searchTerm) || 
-          project.clientInformation.clientName.includes(searchTerm);
+          project.clientInformation.clientName.includes(searchTerm)
       });
     }
 
+    if(projectStatus) {
+      if(projectStatus === 'Todos') return res.status(200).send(projects);
+      projects = projects.filter(project => project.status === projectStatus);
+    }
+
+    if(domainProvider) {
+      if(domainProvider === 'Todos') return res.status(200).send(projects);
+      projects = projects.filter(project => project.domainProvider === domainProvider);
+    }
+
+    if(hostingProvider) {
+      if(hostingProvider === 'Todos') return res.status(200).send(projects);
+      projects = projects.filter(project => project.hostingProvider === hostingProvider);
+    }
+    
+    if(category) {
+      if(category === 'Todas') return res.status(200).send(projects);
+      projects = projects.filter(project => project.category === category);
+    } 
+
     if(!projects || projects.length === 0)
-      return res.status(500).send('Nenhum projecto encontrado.');
-  
+      return res.status(500).send({projects: [], message: 'Nenhum projecto encontrado.'});
+    
     res.status(200).send(projects);
   } catch(err) {
-    res.status(500).send(err);
+    res.status(500).send(err.message);
   }
 };
 
@@ -66,7 +62,6 @@ const addProject = async (req, res) => {
     const responsible = await User.findById(req.body.responsibleId);
     if(!responsible) return res.status(404).send('O usuário não foi encontrado.');
 
-    console.log(responsible);
     const project = _.omit(
       req.body, [
       'clientName', 
